@@ -2,7 +2,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.soq.qa";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.soq.qa";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const response = await fetch(`${API_BASE_URL}/users/me/`, {
+    const response = await fetch(`${API_BASE_URL}/api/users/me/`, {
       method: "GET",
       headers: {
         Authorization: authHeader,
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
     let data;
     try {
       data = await response.json();
-    } catch (parseError) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid response from server" },
         { status: response.status || 500 }
@@ -32,7 +33,10 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.detail || data.message || data.error || "Failed to fetch user" },
+        {
+          error:
+            data.detail || data.message || data.error || "Failed to fetch user",
+        },
         { status: response.status }
       );
     }
@@ -41,8 +45,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Get user API error:", error);
     return NextResponse.json(
-      { 
-        error: error instanceof Error ? error.message : "Internal server error" 
+      {
+        error: error instanceof Error ? error.message : "Internal server error",
       },
       { status: 500 }
     );

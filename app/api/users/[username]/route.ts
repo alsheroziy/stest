@@ -28,7 +28,7 @@ export async function GET(
     let data;
     try {
       data = await response.json();
-    } catch (parseError) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid response from server" },
         { status: response.status || 500 }
@@ -82,7 +82,7 @@ export async function PATCH(
     let data;
     try {
       data = await response.json();
-    } catch (parseError) {
+    } catch {
       return NextResponse.json(
         { error: "Invalid response from server" },
         { status: response.status || 500 }

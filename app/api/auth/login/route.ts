@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -17,13 +17,26 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
+    // Check if response has content
+    const contentType = response.headers.get("content-type");
     let data;
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      // If response is not JSON, return a generic error
+    
+    if (contentType && contentType.includes("application/json")) {
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        return NextResponse.json(
+          { error: "Invalid JSON response from server" },
+          { status: response.status || 500 }
+        );
+      }
+    } else {
+      // If not JSON, read as text
+      const text = await response.text();
+      console.error("Non-JSON response:", text);
       return NextResponse.json(
-        { error: "Invalid response from server" },
+        { error: `Invalid response format: ${text.substring(0, 100)}` },
         { status: response.status || 500 }
       );
     }
@@ -37,7 +50,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error) {
-    // Log the error for debugging (in production, use proper logging)
     console.error("Login API error:", error);
 
     return NextResponse.json(
