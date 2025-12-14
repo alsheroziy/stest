@@ -25,21 +25,32 @@ export async function GET(
       },
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: "Invalid response from server" },
+        { status: response.status || 500 }
+      );
+    }
 
     if (!response.ok) {
       return NextResponse.json(
         {
-          error: data.detail || data.message || "Failed to fetch user profile",
+          error: data.detail || data.message || data.error || "Failed to fetch user profile",
         },
         { status: response.status }
       );
     }
 
     return NextResponse.json(data);
-  } catch {
+  } catch (error) {
+    console.error("Get user profile API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: error instanceof Error ? error.message : "Internal server error" 
+      },
       { status: 500 }
     );
   }
@@ -68,19 +79,30 @@ export async function PATCH(
       body: JSON.stringify(body),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: "Invalid response from server" },
+        { status: response.status || 500 }
+      );
+    }
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.detail || data.message || "Update failed" },
+        { error: data.detail || data.message || data.error || "Update failed" },
         { status: response.status }
       );
     }
 
     return NextResponse.json(data);
-  } catch {
+  } catch (error) {
+    console.error("Update user profile API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: error instanceof Error ? error.message : "Internal server error" 
+      },
       { status: 500 }
     );
   }

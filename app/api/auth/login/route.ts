@@ -16,19 +16,33 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      // If response is not JSON, return a generic error
+      return NextResponse.json(
+        { error: "Invalid response from server" },
+        { status: response.status || 500 }
+      );
+    }
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.detail || data.message || "Login failed" },
+        { error: data.detail || data.message || data.error || "Login failed" },
         { status: response.status }
       );
     }
 
     return NextResponse.json(data);
-  } catch {
+  } catch (error) {
+    // Log the error for debugging (in production, use proper logging)
+    console.error("Login API error:", error);
+    
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: error instanceof Error ? error.message : "Internal server error" 
+      },
       { status: 500 }
     );
   }
