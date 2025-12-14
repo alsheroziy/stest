@@ -6,7 +6,7 @@ const API_BASE_URL = "https://api.soq.qa";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     const authHeader = request.headers.get("authorization");
@@ -15,16 +15,15 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/users/${params.username}/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const { username } = await params;
+
+    const response = await fetch(`${API_BASE_URL}/api/users/${username}/`, {
+      method: "GET",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+    });
 
     const data = await response.json();
 
@@ -48,7 +47,7 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     const authHeader = request.headers.get("authorization");
@@ -57,19 +56,17 @@ export async function PATCH(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    const { username } = await params;
     const body = await request.json();
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/users/${params.username}/`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: authHeader,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/api/users/${username}/`, {
+      method: "PATCH",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
     const data = await response.json();
 
