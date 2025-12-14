@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Soq.qa Application
+
+Next.js ilovasida email autentifikatsiya va profil boshqaruvi bilan.
+
+## Features
+
+- ✅ Email va parol bilan login
+- ✅ Foydalanuvchi profilini ko'rish va tahrirlash
+- ✅ shadcn UI komponentlari
+- ✅ API proxy (CORS muammosiz)
 
 ## Getting Started
 
-First, run the development server:
+### Development
+
+1. Dependencies o'rnating:
+
+```bash
+npm install
+```
+
+2. Development serverni ishga tushiring:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Brauzerda oching: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables (Ixtiyoriy)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Agar API URL'ni o'zgartirmoqchi bo'lsangiz, `.env.local` fayl yarating:
 
-## Learn More
+```env
+NEXT_PUBLIC_API_BASE_URL=https://api.soq.qa
+```
 
-To learn more about Next.js, take a look at the following resources:
+Agar environment variable berilmasa, default `https://api.soq.qa` ishlatiladi.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Vercel'ga Deploy
 
-## Deploy on Vercel
+1. GitHub'ga push qiling:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. [Vercel](https://vercel.com)'ga kiring va yangi project yarating
+
+3. GitHub repository'ni tanlang
+
+4. Environment Variables (ixtiyoriy):
+   - `NEXT_PUBLIC_API_BASE_URL` = `https://api.soq.qa`
+
+5. Deploy qiling!
+
+### Boshqa Platformalarga Deploy
+
+1. Build qiling:
+
+```bash
+npm run build
+```
+
+2. Start qiling:
+
+```bash
+npm start
+```
+
+**Eslatma:** Production'da ham ishlaydi, chunki:
+- API route'lar server-side'da ishlaydi (CORS muammosi yo'q)
+- Environment variable'lar to'g'ri ishlatiladi
+- Barcha xatolar to'g'ri qayta ishlanadi
+
+## Project Structure
+
+```
+/app
+  /api          # Next.js API routes (proxy)
+  /login        # Login page
+  /profile      # Profile page
+/contexts       # Auth context
+/lib            # API client
+/components     # shadcn UI components
+```
+
+## API Endpoints
+
+- `POST /api/auth/login` - Login
+- `GET /api/users/me` - Current user
+- `GET /api/users/[username]` - User profile
+- `PATCH /api/users/[username]` - Update profile

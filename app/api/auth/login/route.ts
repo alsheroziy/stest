@@ -2,7 +2,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const API_BASE_URL = "https://api.soq.qa";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.soq.qa";
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,10 +39,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     // Log the error for debugging (in production, use proper logging)
     console.error("Login API error:", error);
-    
+
     return NextResponse.json(
-      { 
-        error: error instanceof Error ? error.message : "Internal server error" 
+      {
+        error: error instanceof Error ? error.message : "Internal server error",
       },
       { status: 500 }
     );
